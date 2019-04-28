@@ -45,20 +45,21 @@ public class AIServer extends WebSocketServer {
         int type = Majiangs.TYPE_ORIGIN;
         for (Majiangs mj : majiangs) {
             List<Integer> cards = MaJiangDef.stringToCards(mj.getOriginCards());
+            List<Integer> card = MaJiangDef.stringToCards(mj.getCard());
             if (mj.getType() == Majiangs.TYPE_OUT) { // 出牌
                 int out = AIUtil.outAI(cards, gui);
                 List<Integer> result = new ArrayList<>();
                 result.add(out);
                 conn.send(MaJiangDef.cardsToString(result) + ""); //  出牌和其他不兼容
                 System.out.println("输出的是: " + MaJiangDef.cardsToString(result));
-                break;
+                return;
             } else if (mj.getType() == Majiangs.TYPE_PENG) { // 碰
-                double pengScore = AIUtil.pengAIScore(cards, gui, Integer.parseInt(mj.getCard()), 1.0);
+                double pengScore = AIUtil.pengAIScore(cards, gui, card.get(0), 1.0);
                 if (pengScore > score) {
                     type = Majiangs.TYPE_PENG;
                 }
             } else if (mj.getType() == Majiangs.TYPE_GANG) { // 杠
-                double gangScore = AIUtil.gangAIScore(cards, gui, Integer.parseInt(mj.getCard()), 1.0);
+                double gangScore = AIUtil.gangAIScore(cards, gui, card.get(0), 1.0);
                 if (gangScore > score) {
                     type = Majiangs.TYPE_GANG;
                 }
